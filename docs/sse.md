@@ -25,10 +25,13 @@ output before flushing.
 
 ## Browser
 
+`EventSource` cannot set custom headers, so cc-lens also accepts the bearer
+token as a `?token=` query parameter (on every endpoint, but you only need
+it here):
+
 ```js
-// EventSource doesn't support custom headers, so disable auth or front
-// cc-lens with a reverse proxy that injects the Authorization header.
-const es = new EventSource("http://127.0.0.1:8787/stream");
+const url = `http://127.0.0.1:8787/stream?token=${encodeURIComponent(token)}`;
+const es = new EventSource(url);
 es.addEventListener("PostToolUse", e => {
   const event = JSON.parse(e.data);
   console.log(event.session_id, event.kind);
@@ -36,8 +39,9 @@ es.addEventListener("PostToolUse", e => {
 es.addEventListener("error", e => console.warn("dropped", e));
 ```
 
-For browser use through auth, terminate auth at a reverse proxy
-([security.md](./security.md)).
+Trade-off: query-param tokens can land in proxy logs and browser history. If
+you need to avoid that, terminate auth at a reverse proxy and have it
+inject `Authorization` from a cookie — see [security.md](./security.md).
 
 ## Node
 
