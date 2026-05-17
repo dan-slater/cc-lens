@@ -29,7 +29,7 @@ scheduled jobs here follow the same discipline:
   a directory the human owns.
 
 The two cc-lens-native examples
-([stuck-session-shepherd](./stuck-session-shepherd.md) and
+([manager](./manager.md) and
 [session-digest](./session-digest.md)) are the ones that lean hardest on
 cc-lens itself. Everything else uses cc-lens only as one input among many.
 
@@ -97,7 +97,7 @@ loopback bind is fine.
 | [standup.md](./standup.md) | 07:30 and 13:30 | none directly; read-only across code host |
 | [meeting-notes.md](./meeting-notes.md) | 09/10/15/16 Mon–Fri | none — included as a complementary pattern |
 | [doc-drift-report.md](./doc-drift-report.md) | Nightly 03:00 | none — read-only over a docs tree |
-| [stuck-session-shepherd.md](./stuck-session-shepherd.md) | Every 15 min | read `/sessions`, write `/agents/{id}/messages` |
+| [manager.md](./manager.md) | Every 15 min | read `/sessions` and transcripts, write `/agents/{id}/messages` — LLM-driven supervisor that keeps every session on the grand plan |
 | [session-digest.md](./session-digest.md) | Daily 09:00 | read `/sessions` and `/sessions/{id}/transcript` |
 
 Plus [run.sh](./run.sh) — a small portable helper that parses any of these
