@@ -178,6 +178,26 @@ All flags accept env-var equivalents:
   resolves via `os.UserHomeDir`) is correct, but the generated `jq | curl`
   hook command assumes a Unix shell.
 
+## Example scheduled jobs
+
+Worked examples of recurring jobs that talk to cc-lens — daily briefs, a
+"stuck-session shepherd" that nudges idle agents, a session digest — live
+on the long-lived [`examples`](https://github.com/dan-slater/cc-lens/tree/examples/examples/schedules)
+branch (not `main`). Each is a markdown file with YAML frontmatter
+(schedule, inputs, cc-lens calls used) plus the exact Claude prompt and
+curl commands. A small `run.sh` helper extracts the runnable bits.
+
+```sh
+git fetch origin examples
+git checkout examples
+ls examples/schedules/
+```
+
+They run anywhere that can reach your cc-lens server: Anthropic
+`/schedule` routines, systemd timers, GitHub Actions cron. The branch
+deliberately stays out of `main` so feature additions and tagged releases
+don't drag operational examples along.
+
 ## Development
 
 ```sh
