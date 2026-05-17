@@ -8,7 +8,7 @@
 #
 # Usage:
 #   ./run.sh morning-brief.md
-#   ./run.sh stuck-session-shepherd.md
+#   ./run.sh manager.md
 #
 # Output sections:
 #   1. Parsed frontmatter (name, cron, timezone, channel).
