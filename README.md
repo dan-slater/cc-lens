@@ -39,25 +39,36 @@ program against from any language, with one static binary.
 go install github.com/dan-slater/cc-lens@latest
 ```
 
-Or grab a prebuilt binary from the [releases page][releases].
+Or grab a prebuilt binary from the [releases page][releases]. Full options
+(systemd, manual builds, cross-compile): see **[docs/install.md](./docs/install.md)**.
 
 [releases]: https://github.com/dan-slater/cc-lens/releases
 
 ## Quickstart
 
 ```sh
-# 1. Start the server on a port of your choice.
+# 1. Start the server. Token + addr explained in docs/configuration.md.
 CC_LENS_TOKEN=hunter2 cc-lens start --addr :8787
 
 # 2. Patch ~/.claude/settings.json so Claude Code posts events back.
+#    What this writes, manual install, troubleshooting: docs/hooks.md.
 cc-lens install-hooks --server http://127.0.0.1:8787 --token hunter2
 
 # 3. Open a Claude Code session in another terminal.
 claude
 
-# 4. Watch events stream in.
+# 4. Watch events stream in. Browser/Node/Python clients + backpressure: docs/sse.md.
 curl -N -H "Authorization: Bearer hunter2" http://127.0.0.1:8787/stream
 ```
+
+Each step has a deeper page:
+1. **Start** → [configuration.md](./docs/configuration.md) — flags, env vars, ring sizing, webhook fan-out.
+2. **Hooks** → [hooks.md](./docs/hooks.md) — what gets written, per-project install, manual install, debugging.
+3. **Claude Code session** → no cc-lens-side config; if events don't arrive, see the [troubleshooting section of hooks.md](./docs/hooks.md#troubleshooting).
+4. **Stream** → [sse.md](./docs/sse.md) — `EventSource`, `curl -N`, reconnection, the gap caveat.
+
+Want to send messages *into* an agent? → [messages.md](./docs/messages.md).
+Exposing cc-lens beyond localhost? → [security.md](./docs/security.md).
 
 ## HTTP API
 
