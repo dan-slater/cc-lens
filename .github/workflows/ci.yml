@@ -1,0 +1,63 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - run: go build ./...
+      - run: go vet ./...
+      - run: go test ./...
+
+  zero-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert go.mod has no non-stdlib dependencies
+        run: |
+          set -euo pipefail
+          if grep -E '^\s*require ' go.mod | grep -v '// indirect' | grep -v '^module' | grep -q .; then
+            echo "ERROR: non-stdlib dependency detected in go.mod"
+            grep -E '^\s*require ' go.mod
+            exit 1
+          fi
+          if [ -f go.sum ] && [ -s go.sum ]; then
+            echo "ERROR: go.sum is non-empty — a transitive dependency has slipped in"
+            cat go.sum
+            exit 1
+          fi
+          echo "OK — zero production dependencies"
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [test, zero-deps]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Cross-compile
+        run: |
+          mkdir -p dist
+          for os in linux darwin windows; do
+            for arch in amd64 arm64; do
+              ext=""
+              [ "$os" = "windows" ] && ext=".exe"
+              GOOS=$os GOARCH=$arch go build -trimpath -ldflags='-s -w' -o dist/cc-lens-$os-$arch$ext .
+            done
+          done
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*

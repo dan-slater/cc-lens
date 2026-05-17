@@ -1,0 +1,5 @@
+/cc-lens
+/dist/
+*.test
+*.out
+.DS_Store
