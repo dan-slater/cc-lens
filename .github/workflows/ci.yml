@@ -43,6 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write     # for sigstore signing of provenance
+      attestations: write # for actions/attest-build-provenance
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -58,6 +60,10 @@ jobs:
               GOOS=$os GOARCH=$arch go build -trimpath -ldflags='-s -w' -o dist/cc-lens-$os-$arch$ext .
             done
           done
+      - name: Generate SLSA build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: "dist/*"
       - uses: softprops/action-gh-release@v2
         with:
           files: dist/*

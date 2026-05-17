@@ -10,7 +10,10 @@ honest:
    non-test files.
 2. **Stay small.** The production code budget is roughly 500 source lines. If
    your change pushes us materially over, justify it.
-3. **MIT-compatible only.** No GPL/AGPL/CDDL contributions or test data.
+3. **License.** Contributions are accepted under the project's
+   [FSL-1.1-ALv2](./LICENSE) license. By opening a PR you confirm you have
+   the right to submit the work under those terms. No GPL/AGPL/CDDL code or
+   test data — those licenses are incompatible with FSL redistribution.
 4. **No new background goroutines without a shutdown path.**
 5. **Tests use `testing` + `net/http/httptest` only.** No `testify`, no `gomock`.
 

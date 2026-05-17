@@ -15,7 +15,7 @@ production dependencies.
 | Binary size     | ~7 MB, static                                                   |
 | Storage         | in-memory ring buffer (events) + in-memory queue (messages)     |
 | Transcripts     | read on demand from `~/.claude/projects/*.jsonl` (never copied) |
-| License         | MIT                                                             |
+| License         | **FSL-1.1-ALv2** (becomes Apache 2.0 after 2 years) — see below |
 
 ## Why does this exist?
 
@@ -196,4 +196,21 @@ dependency.
 
 ## License
 
-[MIT](./LICENSE).
+**[Functional Source License, v1.1, ALv2 future grant](./LICENSE)** (FSL-1.1-ALv2).
+
+In plain English:
+- **You can use, modify, and redistribute cc-lens** for any purpose other than
+  *competing* with it — i.e. you cannot offer cc-lens (or a substitute for it)
+  as a hosted commercial service or repackaged commercial product.
+- **Internal use, education, research, and professional services** built on
+  cc-lens are explicitly permitted.
+- **After two years**, each release automatically converts to Apache 2.0 —
+  fully OSI-open, no strings.
+
+This is a [Fair Source](https://fair.io/) license, not OSI-approved
+"open source". The trade-off is intentional: we want cc-lens to be reliably
+single-vendor today so the project stays small and coherent, and reliably
+permissive tomorrow so it never becomes a hostage to that vendor.
+
+See [SECURITY.md](./SECURITY.md) for our supply-chain posture (signed
+releases, build provenance, branch protection, zero deps).
