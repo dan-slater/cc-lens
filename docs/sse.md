@@ -69,6 +69,38 @@ with requests.get(
             print(json.loads(line[6:]))
 ```
 
+## Cloudflare Tunnel + HTTP/3 gotcha
+
+**Symptom.** You front cc-lens with `cloudflared` (or any Cloudflare-proxied
+hostname). Browsers connect fine, the first events arrive, then the stream
+goes silent. `EventSource` flips to `readyState=0`, reconnects, repeats. No
+errors in the cc-lens log; nothing obviously wrong in the tunnel log.
+
+**Cause.** Cloudflare's edge closes HTTP/3 (and HTTP/2) streams that look
+idle to it. SSE comment lines (`: ping`) count as activity, but the **inner**
+idle timeout on whatever process actually terminates the connection has to
+be longer than the keepalive interval, or the server hangs up before the
+next ping.
+
+**Recipe.**
+
+1. Keep cc-lens's 20s keepalive on (it already pings every 20s — see the
+   `: ping\n\n` comment above). Don't disable it behind a proxy.
+2. If you're terminating the tunnel at a non-Go process before cc-lens
+   (e.g. a Bun reverse proxy in front), set its idle timeout to **>90s** —
+   for Bun, `Bun.serve({ idleTimeout: 255 })` is what works in practice.
+   Go's `net/http` has no idle timeout by default, so the stock cc-lens
+   binary needs no change.
+3. In `cloudflared` config, leave `proxyConnectTimeout` /
+   `proxyTLSTimeout` at defaults but bump `--http2-origin` off if you see
+   ALPN-related disconnects; HTTP/1.1 to the origin is fine for SSE.
+
+If you can still reproduce drops after that, run the curl recipe above
+against the public hostname — if curl stays connected and the browser
+doesn't, the issue is on the browser/CF side (often QUIC); add
+`?cf_quic=off` to your test or disable HTTP/3 for the hostname while
+debugging.
+
 ## Backpressure and gaps
 
 The bus drops events for any subscriber whose 64-event buffer is full. The
